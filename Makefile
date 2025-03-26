@@ -88,8 +88,10 @@ endif
 install:
 	rm -rf $(DESTDIR)/ancient
 	install -c -m 0755 -d $(DESTDIR)/ancient
-	install -c -m 0644 *.cmi *.mli *.cma *.cmx *.cmxa *.a mmalloc/*.a META \
+	install -c -m 0644 *.cmi *.mli *.cma *.cmx *.cmxa \
+		*.a mmalloc/*.a META \
 	  $(DESTDIR)/ancient
+	install -c -m 0644 *.so $(DESTDIR)/stublibs
 
 # Distribution.
 
