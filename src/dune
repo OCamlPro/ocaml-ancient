@@ -1,0 +1,25 @@
+(include_subdirs unqualified)
+
+(library
+  (public_name ancient)
+  (libraries unix)
+  (foreign_stubs
+    (language c)
+    (flags
+      (:standard -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_MMAP))
+    (names
+      ancient_c
+      attach
+      detach
+      keys
+      mcalloc
+      mfree
+      mmalloc
+      mmap-sup
+      mmcheck
+      mmemalign
+      mmstats
+      mmtrace
+      mrealloc
+      mvalloc
+      sbrk-sup)))

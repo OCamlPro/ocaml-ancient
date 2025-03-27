@@ -55,7 +55,6 @@ Please see file ancient.mli .
 Compiling
 ----------------------------------------------------------------------
 
-  cd mmalloc && ./configure
   make
 
 Make sure you run this command before running any program which
