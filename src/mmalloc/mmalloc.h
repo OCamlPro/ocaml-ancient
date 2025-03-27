@@ -1,15 +1,10 @@
 #ifndef MMALLOC_H
 #define MMALLOC_H 1
 
-#ifdef HAVE_STDDEF_H
-#  include <stddef.h>
-#else
-#  include <sys/types.h>   /* for size_t */
-#  include <stdio.h>       /* for NULL */
-#endif
+#include <stddef.h>
 
 #include "ansidecl.h"
- 
+
 /* Allocate SIZE bytes of memory.  */
 
 extern PTR mmalloc PARAMS ((PTR, size_t));

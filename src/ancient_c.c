@@ -12,6 +12,7 @@
 #include <caml/mlvalues.h>
 #include <caml/fail.h>
 #include <caml/address_class.h>
+#include <caml/version.h>
 
 #if OCAML_VERSION_MAJOR == 5
 #include <caml/shared_heap.h>
@@ -21,7 +22,7 @@
 
 #endif
 
-#include "mmalloc/mmalloc.h"
+#include "./mmalloc/mmalloc.h"
 
 // Area is an expandable buffer, allocated on the C heap.
 typedef struct area {

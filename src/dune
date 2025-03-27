@@ -1,0 +1,23 @@
+(include_subdirs unqualified)
+
+(library
+  (public_name ancient)
+  (libraries unix)
+  (foreign_stubs
+    (language c)
+    (names
+      ancient_c
+      attach
+      detach
+      keys
+      mcalloc
+      mfree
+      mmalloc
+      mmap-sup
+      mmcheck
+      mmemalign
+      mmstats
+      mmtrace
+      mrealloc
+      mvalloc
+      sbrk-sup)))

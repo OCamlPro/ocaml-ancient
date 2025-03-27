@@ -24,17 +24,12 @@ Boston, MA 02111-1307, USA.  */
 #include <fcntl.h> /* After sys/types.h, at least for dpx/2.  */
 #include <sys/stat.h>
 #include <string.h>
-#ifdef HAVE_UNISTD_H
 #include <unistd.h>	/* Prototypes for lseek */
-#endif
 #include "mmprivate.h"
 
 #ifndef SEEK_SET
 #define SEEK_SET 0
 #endif
-
-
-#if defined(HAVE_MMAP)
 
 /* Forward declarations/prototypes for local functions */
 
@@ -158,7 +153,7 @@ mmalloc_attach (fd, baseaddr)
    Note that we have to update the file descriptor number in the malloc-
    descriptor read from the file to match the current valid one, before
    trying to map the file in, and again after a successful mapping and
-   after we've switched over to using the mapped in malloc descriptor 
+   after we've switched over to using the mapped in malloc descriptor
    rather than the temporary one on the stack.
 
    Once we've switched over to using the mapped in malloc descriptor, we
@@ -201,21 +196,3 @@ reuse (fd)
     }
   return (mdp);
 }
-
-#else	/* !defined (HAVE_MMAP) */
-
-/* For systems without mmap, the library still supplies an entry point
-   to link to, but trying to initialize access to an mmap'd managed region
-   always fails. */
-
-/* ARGSUSED */
-PTR
-mmalloc_attach (fd, baseaddr)
-  int fd;
-  PTR baseaddr;
-{
-   return (NULL);
-}
-
-#endif	/* defined (HAVE_MMAP) */
-
