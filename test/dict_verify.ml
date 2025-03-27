@@ -1,6 +1,6 @@
 (* Verify shared dictionary. *)
 
-open Test_ancient_dict
+open Dict
 open Printf
 open Unix
 

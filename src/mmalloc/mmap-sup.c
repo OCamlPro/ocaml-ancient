@@ -20,14 +20,13 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
-#if defined(HAVE_MMAP)
+#ifndef _WIN32
 
-#ifdef HAVE_UNISTD_H
 #include <unistd.h>	/* Prototypes for lseek */
-#endif
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <sys/types.h>
 
 #ifndef SEEK_SET
 #define SEEK_SET 0
@@ -215,7 +214,7 @@ mmalloc_findbase (size)
   return ((PTR) base);
 }
 
-#else	/* defined(HAVE_MMAP) */
+#else
 /* Prevent "empty translation unit" warnings from the idiots at X3J11. */
 static char ansi_c_idiots = 69;
-#endif	/* defined(HAVE_MMAP) */
+#endif

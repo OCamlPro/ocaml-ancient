@@ -28,13 +28,7 @@ Boston, MA 02111-1307, USA.
 
 #include "mmalloc.h"
 
-#ifdef HAVE_LIMITS_H
-#  include <limits.h>
-#else
-#  ifndef CHAR_BIT
-#    define CHAR_BIT 8
-#  endif
-#endif
+#include <limits.h>
 
 #ifndef MIN
 #  define MIN(A, B) ((A) < (B) ? (A) : (B))
@@ -192,7 +186,7 @@ struct mdesc
      needs to be maintained on a per-process basis. */
 
   PTR (*morecore) PARAMS ((struct mdesc *, size_t));
-     
+
   /* Pointer to the function that causes an abort when the memory checking
      features are activated.  By default this is set to abort(), but can
      be set to another function by the application using mmalloc().
@@ -317,11 +311,7 @@ extern struct mdesc *__mmalloc_sbrk_init PARAMS ((void));
 /* Grow or shrink a contiguous mapped region using mmap().
    Works much like sbrk() */
 
-#if defined(HAVE_MMAP)
-
 extern PTR __mmalloc_mmap_morecore PARAMS ((struct mdesc *, size_t));
-
-#endif
 
 /* Remap a mmalloc region that was previously mapped. */
 
