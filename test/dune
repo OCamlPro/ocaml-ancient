@@ -1,0 +1,27 @@
+(library
+  (name dict)
+  (modules dict))
+
+(executable
+  (name dict_write)
+  (modules dict_write)
+  (libraries
+    ancient
+    dict
+    unix))
+
+(executable
+  (name dict_verify)
+  (modules dict_verify)
+  (libraries
+    ancient
+    dict
+    unix))
+
+(rule
+  (alias runtest)
+  (deps (:dict ./words))
+  (action
+    (progn
+      (run ./dict_write.exe %{dict} output 0x440000000000)
+      (run ./dict_verify.exe %{dict} output))))
