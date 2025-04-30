@@ -25,4 +25,7 @@ Secondly, this module allows you to share those structures between
 processes.  In this mode, the structures are backed by a disk file,
 and any process that has read/write access that disk file can map that
 file in and see the structures.")
-  (license "LGPL-2.1-or-later WITH OCaml-LGPL-linking-exception"))
+  (license "LGPL-2.1-or-later WITH OCaml-LGPL-linking-exception")
+  (depends
+    (ocaml (>= 4.12))
+    base-nnp))
