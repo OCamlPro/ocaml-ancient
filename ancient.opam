@@ -23,6 +23,8 @@ homepage: "https://github.com/OCamlPro/ocaml-ancient"
 bug-reports: "https://github.com/OCamlPro/ocaml-ancient/issues"
 depends: [
   "dune" {>= "3.0"}
+  "ocaml" {>= "4.08"}
+  "base-nnp"
   "odoc" {with-doc}
 ]
 build: [
