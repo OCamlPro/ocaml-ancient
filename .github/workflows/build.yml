@@ -19,7 +19,7 @@ jobs:
           - macos-latest
           - ubuntu-latest
         ocaml-compiler:
-          - ocaml-variants.4.08.1+options,ocaml-option-nnp
+          - ocaml-variants.4.12.1+options,ocaml-option-nnp
           - ocaml-variants.4.14.2+options,ocaml-option-nnp
           - 5.3.0
         exclude:
