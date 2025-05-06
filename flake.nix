@@ -3,50 +3,52 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    systems.url = "github:nix-systems/default";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, systems }:
-    let
-      eachSystem = nixpkgs.lib.genAttrs (import systems);
-    in
-    rec {
-      packages = eachSystem (system:
-        let
-          legacyPackages = nixpkgs.legacyPackages.${system};
-          ocamlPackages = legacyPackages.ocamlPackages;
-        in rec
-        {
-          default = self.packages.${system}.ancient;
+  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
 
-          ancient = ocamlPackages.buildDunePackage {
-            pname = "ancient";
-            version = "dev";
-            duneVersion = "3";
-            src = ./.;
-          };
+        ocamlPackages4 = pkgs.ocaml-ng.ocamlPackages_4_14.overrideScope (self: super: {
+          ocaml = super.ocaml.override { noNakedPointers = true; };
         });
 
-      devShells = eachSystem (system:
-        let
-          legacyPackages = nixpkgs.legacyPackages.${system};
-          ocamlPackages = legacyPackages.ocamlPackages;
-          pkgs = packages.${system};
-        in
-        {
-          default = legacyPackages.mkShell {
-            packages = [
-              legacyPackages.nixpkgs-fmt
-              ocamlPackages.utop
-              ocamlPackages.odoc
-              ocamlPackages.ocaml-lsp
-              ocamlPackages.patdiff
-            ];
+        ocamlPackages5 = pkgs.ocaml-ng.ocamlPackages_5_1;
 
-            inputsFrom = [
-              pkgs.ancient
-            ];
-          };
-        });
-    };
+        buildAncient = ocamlPackages: ocamlPackages.buildDunePackage {
+          pname = "ancient";
+          version = "dev";
+
+          duneVersion = "3";
+          src = ./.;
+
+          nativeBuildInputs = [ pkgs.git ];
+        };
+
+        devShellFor = ocamlPackages: ancient: pkgs.mkShell {
+          packages = with ocamlPackages; [
+            utop
+            odoc
+            ocaml-lsp
+            patdiff
+          ];
+
+          inputsFrom = [ ancient ];
+        };
+      in
+      {
+        packages = {
+          default = buildAncient ocamlPackages5;
+          ocaml4 = buildAncient ocamlPackages4;
+        };
+
+        formatter = pkgs.nixpkgs-fmt;
+
+        devShells = {
+          default = devShellFor ocamlPackages5 self.packages.${system}.default;
+          ocaml4 = devShellFor ocamlPackages4 self.packages.${system}.ocaml4;
+        };
+      });
 }
