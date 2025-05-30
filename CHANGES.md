@@ -1,4 +1,4 @@
-## 2.2.0
+## 0.10.0
 
 ### Build
 - Install the dynamic library (PR #12)
