@@ -3,7 +3,7 @@
 
 (name ancient)
 (authors "Richard Jones et.al.")
-(maintainers "Fabrice Le Fessant <fabrice.le_fessant@ocamlpro.com>")
+(maintainers "Pierre Villemot <pierre.villemot@ocamlpro.com>")
 (homepage "https://github.com/OCamlPro/ocaml-ancient")
 (bug_reports "https://github.com/OCamlPro/ocaml-ancient/issues")
 
