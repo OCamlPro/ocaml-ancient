@@ -33,6 +33,7 @@
             odoc
             ocaml-lsp
             patdiff
+            dune-release
           ];
 
           inputsFrom = [ ancient ];
