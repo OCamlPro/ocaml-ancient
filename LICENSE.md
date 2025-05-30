@@ -1,4 +1,4 @@
-OCaml LGPL Linking Exception
+# OCaml LGPL Linking Exception
 
 As a special exception to the GNU Lesser General Public License, you may link,
 statically or dynamically, a "work that uses the OCaml Core System" with a
@@ -13,7 +13,9 @@ clause 2 of the GNU Lesser General Public License. This exception does not
 however invalidate any other reasons why the executable file might be covered
 by the GNU Lesser General Public License.
 
+# LGPL-v2.1
 
+```
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
 
@@ -515,3 +517,4 @@ necessary.  Here is a sample; alter the names:
   Moe Ghoul, President of Vice
 
 That's all there is to it!
+```

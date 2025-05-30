@@ -6,6 +6,7 @@
 (maintainers "Pierre Villemot <pierre.villemot@ocamlpro.com>")
 (homepage "https://github.com/OCamlPro/ocaml-ancient")
 (bug_reports "https://github.com/OCamlPro/ocaml-ancient/issues")
+(source (github OCamlPro/ocaml-ancient))
 
 (package
   (name ancient)
