@@ -15,7 +15,7 @@
           ocaml = super.ocaml.override { noNakedPointers = true; };
         });
 
-        ocamlPackages5 = pkgs.ocaml-ng.ocamlPackages_5_1;
+        ocamlPackages5 = pkgs.ocaml-ng.ocamlPackages;
 
         buildAncient = ocamlPackages: ocamlPackages.buildDunePackage {
           pname = "ancient";
