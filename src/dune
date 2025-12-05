@@ -19,7 +19,6 @@
       mmcheck
       mmemalign
       mmstats
-      mmtrace
       mrealloc
       mvalloc
       sbrk-sup)))
