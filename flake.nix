@@ -1,8 +1,8 @@
 {
-  description = "Ancient";
+  description = "Ancient library";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -10,46 +10,41 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        git = pkgs.git;
+        mkAncient = ocamlPackages:
+          ocamlPackages.callPackage ./nix/ancient.nix {
+            inherit git;
+            src = ./.;
+          };
+        mkShell = ocamlPackages:
+          pkgs.mkShell {
+            packages = with ocamlPackages; [
+              utop
+              odoc
+              ocaml-lsp
+              patdiff
+              dune-release
+            ];
 
-        ocamlPackages4 = pkgs.ocaml-ng.ocamlPackages_4_14.overrideScope (self: super: {
-          ocaml = super.ocaml.override { noNakedPointers = true; };
-        });
-
-        ocamlPackages5 = pkgs.ocaml-ng.ocamlPackages;
-
-        buildAncient = ocamlPackages: ocamlPackages.buildDunePackage {
-          pname = "ancient";
-          version = "dev";
-
-          duneVersion = "3";
-          src = ./.;
-
-          nativeBuildInputs = [ pkgs.git ];
-        };
-
-        devShellFor = ocamlPackages: ancient: pkgs.mkShell {
-          packages = with ocamlPackages; [
-            utop
-            odoc
-            ocaml-lsp
-            patdiff
-            dune-release
-          ];
-
-          inputsFrom = [ ancient ];
-        };
+            inputsFrom = [
+              (mkAncient ocamlPackages)
+            ];
+          };
       in
-      {
-        packages = {
-          default = buildAncient ocamlPackages5;
-          ocaml4 = buildAncient ocamlPackages4;
-        };
-
+      rec {
+        packages.ancient = mkAncient pkgs.ocamlPackages;
         formatter = pkgs.nixpkgs-fmt;
 
         devShells = {
-          default = devShellFor ocamlPackages5 self.packages.${system}.default;
-          ocaml4 = devShellFor ocamlPackages4 self.packages.${system}.ocaml4;
+          default = mkShell pkgs.ocamlPackages;
+
+          ocaml4 =
+            let
+              ocamlPackages4 = pkgs.ocaml-ng.ocamlPackages_4_14.overrideScope (final: super: {
+                ocaml = super.ocaml.override { noNakedPointers = true; };
+              });
+            in
+            mkShell ocamlPackages4;
         };
       });
 }
