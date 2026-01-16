@@ -9,7 +9,7 @@
 #endif
 
 #include "ansidecl.h"
- 
+
 /* Allocate SIZE bytes of memory.  */
 
 extern PTR mmalloc PARAMS ((PTR, size_t));
@@ -19,11 +19,7 @@ extern PTR mmalloc PARAMS ((PTR, size_t));
 
 extern PTR mrealloc PARAMS ((PTR, PTR, size_t));
 
-/* Allocate NMEMB elements of SIZE bytes each, all initialized to 0.  */
-
-extern PTR mcalloc PARAMS ((PTR, size_t, size_t));
-
-/* Free a block allocated by `mmalloc', `mrealloc' or `mcalloc'.  */
+/* Free a block allocated by `mmalloc', `mrealloc'.  */
 
 extern void mfree PARAMS ((PTR, PTR));
 
@@ -31,19 +27,11 @@ extern void mfree PARAMS ((PTR, PTR));
 
 extern PTR mmemalign PARAMS ((PTR, size_t, size_t));
 
-/* Allocate SIZE bytes on a page boundary.  */
-
-extern PTR mvalloc PARAMS ((PTR, size_t));
-
 /* Activate a standard collection of debugging hooks.  */
 
 extern int mmcheck PARAMS ((PTR, void (*) (void)));
 
 extern int mmcheckf PARAMS ((PTR, void (*) (void), int));
-
-/* Pick up the current statistics. (see FIXME elsewhere) */
-
-extern struct mstats mmstats PARAMS ((PTR));
 
 extern PTR mmalloc_attach PARAMS ((int, PTR));
 

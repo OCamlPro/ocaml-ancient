@@ -24,6 +24,7 @@
               ocaml-lsp
               patdiff
               dune-release
+              ocamlformat
             ];
 
             inputsFrom = [

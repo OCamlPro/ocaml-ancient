@@ -8,15 +8,15 @@ let argv = Array.to_list Sys.argv
 
 let wordsfile, datafile, baseaddr =
   match argv with
-  | [_; wordsfile; datafile; baseaddr] ->
+  | [ _; wordsfile; datafile; baseaddr ] ->
       let baseaddr = Nativeint.of_string baseaddr in
-      wordsfile, datafile, baseaddr
+      (wordsfile, datafile, baseaddr)
   | _ ->
-      failwith (sprintf "usage: %s wordsfile datafile baseaddr"
-		  Sys.executable_name)
+      failwith
+        (sprintf "usage: %s wordsfile datafile baseaddr" Sys.executable_name)
 
 let md =
-  let fd = openfile datafile [O_RDWR; O_TRUNC; O_CREAT] 0o644 in
+  let fd = openfile datafile [ O_RDWR; O_TRUNC; O_CREAT ] 0o644 in
   Ancient.attach fd baseaddr
 
 (* Tree used to store the words.  This is stupid and inefficient
@@ -25,41 +25,38 @@ let md =
  *)
 
 let arraysize = 256 (* one element for each character *)
-
 let tree : tree array = Array.make arraysize Not_Found
 
 let add_to_tree word =
   let len = String.length word in
   if len > 0 then (
     let tree = ref tree in
-    for i = 0 to len-2; do
+    for i = 0 to len - 2 do
       let c = word.[i] in
       let c = Char.code c in
-      match (!tree).(c) with
+      match !tree.(c) with
       | Not_Found ->
-	  (* Allocate more tree. *)
-	  let tree' = Array.make arraysize Not_Found in
-	  (!tree).(c) <- Not_Exists tree';
-	  tree := tree'
+          (* Allocate more tree. *)
+          let tree' = Array.make arraysize Not_Found in
+          !tree.(c) <- Not_Exists tree';
+          tree := tree'
       | Exists (witness, tree') ->
-        assert ( Array.length witness = witness_size);
-	tree := tree'
-      | Not_Exists tree' ->
-	  tree := tree'
+          assert (Array.length witness = witness_size);
+          tree := tree'
+      | Not_Exists tree' -> tree := tree'
     done;
 
     (* Final character. *)
-    let c = word.[len-1] in
+    let c = word.[len - 1] in
     let c = Char.code c in
-    match (!tree).(c) with
+    match !tree.(c) with
     | Not_Found ->
-	(!tree).(c) <- Exists (Array.make witness_size 0, Array.make arraysize Not_Found)
+        !tree.(c) <-
+          Exists (Array.make witness_size 0, Array.make arraysize Not_Found)
     | Exists (witness, _) ->
-      assert ( Array.length witness = witness_size);
-      () (* same word added twice *)
-    | Not_Exists tree' ->
-	(!tree).(c) <- Exists (Array.make witness_size 0,tree')
-  )
+        assert (Array.length witness = witness_size);
+        () (* same word added twice *)
+    | Not_Exists tree' -> !tree.(c) <- Exists (Array.make witness_size 0, tree'))
 
 let () =
   (* Read in the words and put them in the tree. *)
