@@ -1,24 +1,33 @@
 (include_subdirs unqualified)
 
+(executable
+ (name generate_flags)
+ (libraries unix)
+ (modules generate_flags))
+
+(rule
+ (with-stdout-to
+  flags.dune
+  (run ./generate_flags.exe %{ocaml-config:os_type})))
+
 (library
-  (public_name ancient)
-  (libraries unix)
-  (foreign_stubs
-    (language c)
-    (flags
-      (:standard -DHAVE_LIMITS_H -DHAVE_UNISTD_H -DHAVE_MMAP))
-    (names
-      ancient_c
-      attach
-      detach
-      keys
-      mcalloc
-      mfree
-      mmalloc
-      mmap-sup
-      mmcheck
-      mmemalign
-      mmstats
-      mrealloc
-      mvalloc
-      sbrk-sup)))
+ (public_name ancient)
+ (libraries unix)
+ (modules ancient)
+ (foreign_stubs
+  (language c)
+  (flags
+   (:standard
+    (:include flags.dune)))
+  (names
+   ancient_c
+   attach
+   detach
+   keys
+   mfree
+   mmalloc
+   mmap-sup
+   mmcheck
+   mmemalign
+   mrealloc
+   sbrk-sup)))

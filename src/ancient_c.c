@@ -368,7 +368,7 @@ ancient_follow (value obj)
   CAMLlocal1 (v);
 
   v = Field (obj, 0);
-  if (Is_long (v)) caml_invalid_argument ("deleted");
+  if (Is_long (v)) caml_invalid_argument ("deleted: not supported");
   v = Val_hp (v); // v points to the header; make it point to the object.
 
   CAMLreturn (v);
@@ -381,7 +381,7 @@ ancient_delete (value obj)
   CAMLlocal1 (v);
 
   v = Field (obj, 0);
-  if (Is_long (v)) caml_invalid_argument ("deleted");
+  if (Is_long (v)) caml_invalid_argument ("deleted: not supported");
 
   // Otherwise v is a pointer to the out of heap malloc'd object.
   assert (!Is_in_heap_or_young (v));
@@ -420,6 +420,7 @@ ancient_address_of (value obj)
 CAMLprim value
 ancient_attach (value fdv, value baseaddrv)
 {
+#if defined(OS_TYPE_UNIX)
   CAMLparam2 (fdv, baseaddrv);
   CAMLlocal1 (mdv);
 
@@ -435,11 +436,15 @@ ancient_attach (value fdv, value baseaddrv)
   Field (mdv, 0) = (value) md;
 
   CAMLreturn (mdv);
+#else
+  caml_invalid_argument("ancient_attach: not supported");
+#endif // OS_TYPE_UNIX
 }
 
 CAMLprim value
 ancient_detach (value mdv)
 {
+#if defined(OS_TYPE_UNIX)
   CAMLparam1 (mdv);
 
   void *md = (void *) Field (mdv, 0);
@@ -450,6 +455,9 @@ ancient_detach (value mdv)
   }
 
   CAMLreturn (Val_unit);
+#else
+  caml_invalid_argument("ancient_detach: not supported");
+#endif // OS_TYPE_UNIX
 }
 
 struct keytable {
@@ -460,6 +468,7 @@ struct keytable {
 CAMLprim value
 ancient_share_info (value mdv, value keyv, value obj)
 {
+#if defined(OS_TYPE_UNIX)
   CAMLparam3 (mdv, keyv, obj);
   CAMLlocal3 (proxy, info, rv);
 
@@ -513,11 +522,15 @@ ancient_share_info (value mdv, value keyv, value obj)
   Field (rv, 1) = info;
 
   CAMLreturn (rv);
+#else
+  caml_invalid_argument("ancient_share_info: not supported");
+#endif // OS_TYPE_UNIX
 }
 
 CAMLprim value
 ancient_get (value mdv, value keyv)
 {
+#if defined(OS_TYPE_UNIX)
   CAMLparam2 (mdv, keyv);
   CAMLlocal1 (proxy);
 
@@ -535,4 +548,7 @@ ancient_get (value mdv, value keyv)
   Field (proxy, 0) = (value) ptr;
 
   CAMLreturn (proxy);
+#else
+  caml_invalid_argument("ancient_get: not supported");
+#endif // OS_TYPE_UNIX
 }
