@@ -5,6 +5,7 @@
  (modules dict)
  (build_if
   (= %{ocaml-config:os_type} "Unix"))
+ (flags (:standard -runtime-variant d))
  (libraries ancient unix)
  (action
   (progn
@@ -14,4 +15,5 @@
 (test
  (name mark_follow)
  (modules mark_follow)
+ (flags (:standard -runtime-variant d))
  (libraries ancient))
