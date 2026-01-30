@@ -18,19 +18,48 @@
           };
         mkShell = ocamlPackages:
           pkgs.mkShell {
-            packages = with ocamlPackages; [
+            packages = with ocamlPackages; ([
               utop
               odoc
               ocaml-lsp
               patdiff
               dune-release
               ocamlformat
-            ];
+            ] ++
+            (pkgs.lib.optional (ocaml ? debug) ocaml.debug));
 
             inputsFrom = [
               (mkAncient ocamlPackages)
             ];
           };
+        mkOcamlPackages =
+          { ocamlVersion ? "ocamlPackages"
+          , enableDebug ? false
+          }: pkgs.ocaml-ng."ocamlPackages_${ocamlVersion}".overrideScope (final: super: {
+            ocaml-src = with super.ocaml; pkgs.stdenv.mkDerivation {
+              inherit src version patches;
+              name = "ocaml-src";
+
+              phases = [ "unpackPhase" "patchPhase" "installPhase" ];
+
+              installPhase = ''
+                cp -r . $out
+              '';
+            };
+
+            ocaml = (super.ocaml.overrideAttrs (old: {
+              dontStrip = enableDebug;
+              separateDebugInfo = enableDebug;
+              dontCheckForBrokenSymlinks = enableDebug;
+
+              configureFlags = (old.configureFlags or [ ]) ++
+                (pkgs.lib.optional enableDebug
+                  "CFLAGS=-fdebug-prefix-map=/build/ocaml-${super.ocaml.version}=${final.ocaml-src}");
+            })).override ({
+              framePointerSupport = enableDebug;
+              noNakedPointers = super.ocaml.version == "4.14";
+            });
+          });
       in
       rec {
         packages.ancient = mkAncient pkgs.ocamlPackages;
@@ -38,14 +67,8 @@
 
         devShells = {
           default = mkShell pkgs.ocamlPackages;
-
-          ocaml4 =
-            let
-              ocamlPackages4 = pkgs.ocaml-ng.ocamlPackages_4_14.overrideScope (final: super: {
-                ocaml = super.ocaml.override { noNakedPointers = true; };
-              });
-            in
-            mkShell ocamlPackages4;
+          ocaml4 = mkShell (mkOcamlPackages { ocamlVersion = "4_14"; enableDebug = true; });
+          ocaml5 = mkShell (mkOcamlPackages { ocamlVersion = "5_3"; enableDebug = true; });
         };
       });
 }
