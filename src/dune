@@ -10,24 +10,41 @@
   flags.dune
   (run ./generate_flags.exe %{ocaml-config:os_type})))
 
+(foreign_library
+ (archive_name mmalloc)
+ (language c)
+ (flags
+  (:standard
+   (:include flags.dune)))
+ (enabled_if (= %{os_type} Unix))
+ (names
+  attach
+  detach
+  keys
+  mfree
+  mmalloc
+  mmap-sup
+  mmcheck
+  mmemalign
+  mrealloc
+  sbrk-sup))
+
+(foreign_library
+ (archive_name mmalloc)
+ (language c)
+ (enabled_if (not (= %{os_type} Unix)))
+ (names
+  dummy))
+
 (library
  (public_name ancient)
  (libraries unix)
  (modules ancient)
+ (foreign_archives mmalloc)
  (foreign_stubs
   (language c)
   (flags
    (:standard
     (:include flags.dune)))
   (names
-   ancient_c
-   attach
-   detach
-   keys
-   mfree
-   mmalloc
-   mmap-sup
-   mmcheck
-   mmemalign
-   mrealloc
-   sbrk-sup)))
+   ancient_c)))

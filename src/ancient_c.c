@@ -22,7 +22,11 @@
 
 #endif
 
+#if defined(OS_TYPE_UNIX)
 #include "./mmalloc/mmalloc.h"
+#else
+#include "./mmalloc/ansidecl.h"
+#endif
 
 // Area is an expandable buffer, allocated on the C heap.
 typedef struct area {
@@ -334,7 +338,7 @@ my_realloc (void *data __attribute__((unused)), void *ptr, size_t size)
 static void
 my_free (void *data __attribute__((unused)), void *ptr)
 {
-  return free (ptr);
+  free (ptr);
 }
 
 CAMLprim value
@@ -374,6 +378,16 @@ ancient_follow (value obj)
   CAMLreturn (v);
 }
 
+static inline int
+is_ancient (value obj)
+{
+#if OCAML_VERSION_MAJOR < 5
+  return !Is_in_heap_or_young (obj);
+#else
+  return 1;
+#endif
+}
+
 CAMLprim value
 ancient_delete (value obj)
 {
@@ -384,7 +398,7 @@ ancient_delete (value obj)
   if (Is_long (v)) caml_invalid_argument ("deleted: not supported");
 
   // Otherwise v is a pointer to the out of heap malloc'd object.
-  assert (!Is_in_heap_or_young (v));
+  assert (is_ancient (v));
   free ((void *) v);
 
   // Replace the proxy (a pointer) with an int 0 so we know it's
@@ -400,7 +414,7 @@ ancient_is_ancient (value obj)
   CAMLparam1 (obj);
   CAMLlocal1 (v);
 
-  v = Is_in_heap_or_young (obj) ? Val_false : Val_true;
+  v = is_ancient (obj) ? Val_true : Val_false;
 
   CAMLreturn (v);
 }
